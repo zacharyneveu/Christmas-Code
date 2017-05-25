@@ -22,12 +22,6 @@ struct color{
 	int blue;
 };
 
-/* Struct for storing 3 different pins for each RGB led */
-struct LED{
-	int redPin;
-	int bluePin;
-	int greenPin;
-};
 
 /* declare statusToColor function */
 struct color statusToColor(int status);
@@ -43,6 +37,33 @@ int main(int argc, char *argv[]){
 		return 0;
 	}
 
+	int red[5]={17, 2, 18, 16, 13};
+	int green[5]={27, 25, 23, 20, 19};
+	int blue[5]={22, 4, 24, 21, 26};
+
+	gpioInitialise();
+	//reset pins each iteration
+	int l=0;
+	for(l; l<5; l++){
+		gpioSetMode(red[l], PI_INPUT); 
+		usleep(100000);
+		gpioSetMode(green[l], PI_INPUT);
+		usleep(100000);
+		gpioSetMode(blue[l], PI_INPUT);
+		usleep(100000);
+	}
+
+	int j=0;
+	for(j; j<5; j++){
+		gpioSetMode(red[j], PI_OUTPUT);
+		usleep(10000);
+		gpioSetMode(green[j], PI_OUTPUT);
+		usleep(10000);
+		gpioSetMode(blue[j], PI_OUTPUT);
+		usleep(10000);
+	}
+	printf("Gpio Initialized");
+
 	/* For status, 0=home=green, 1=away=red, 2=school=blue, 3=work=purple  */
 	//int status[5]={0, 1, 3, 2, 1};
 	int status[5];
@@ -52,13 +73,13 @@ int main(int argc, char *argv[]){
 	status[3]=atoi(argv[4]); //katy's status
 	status[4]=atoi(argv[5]); //bob's status
 
-	/* Print statuses */
-	printf("Statuses are:");
-	int z=0;
-	for(z; z<=4; z++){
-		printf("%d, ", status[z]);
+	int i=0;
+	for(i; i<5; i++){
+		writeLED(i, 4); //stop all leds? how do I do this?
+		usleep(100000);
+		writeLED(i, status[i]);
 	}
-	printf("\n");
+	gpioTerminate();
 
 	/* Test print color values */
 	//struct color zachColor=statusToColor(status[zachNum]);
@@ -86,21 +107,38 @@ struct color statusToColor(int status){
 		newColor.blue=255;
 	}
 	else if(status==3){
-		newColor.red=128;
+		newColor.red=255;
 		newColor.green=0;
+		newColor.blue=255;
+	}
+	else{
+		newColor.red=128;
+		newColor.green=128;
 		newColor.blue=128;
 	}
 	return newColor;
 }
 
-
 void writeLED(int personNum, int status){
-	int red[5]={1, 2, 3, 4, 5};
-	int green[5]={6, 7, 8, 9, 10};
-	int blue[5]={11, 12, 13, 14, 15};
+	int red[5]={17, 2, 18, 16, 13};
+	int green[5]={27, 25, 23, 20, 19};
+	int blue[5]={22, 4, 24, 21, 26};
 	struct color writeColor=statusToColor(status);
+	//gpioPWM(red[personNum], 0);
 	gpioPWM(red[personNum], writeColor.red);
+	usleep(10000);
+
+	//gpioPWM(green[personNum], 0);
 	gpioPWM(green[personNum], writeColor.green);
+	usleep(10000);
+
+	//gpioPWM(blue[personNum], 0);
 	gpioPWM(blue[personNum], writeColor.blue);
+	usleep(10000);
+
+	printf("person: %d\n", personNum);
+	printf("color printed...\n");
+	printf("red: %d green: %d blue: %d\n", writeColor.red, writeColor.green, writeColor.blue);
+	printf("\n");	
 }
 
