@@ -1,16 +1,12 @@
 #!/bin/bash
 while true; do
 	FILENAME=data.txt.asc
-	#FILENAME=test.txt
-	FILEID=16sdEcviDRA63P4OQMWHsrCAXFLmiIaqh-ZfuJ5kok2c
-	#FILEID=0B1EKxju8UUxAM3VXWEMwa3VvNjA
+	FILEID=1enhs5dKkDdE-MIbbotRbFncUodgmIblzxmXpXwpghFg
 	CPROGRAM=leds
-	#./gdrive download --force $FILEID
-	./gdrive export --mime text/plain -f 16sdEcviDRA63P4OQMWHsrCAXFLmiIaqh-ZfuJ5kok2c
 
+	./gdrive export --mime text/plain -f $FILEID 
 	echo "" >> $FILENAME #Add newline char to end of downloaded file
 
-	#echo "garbage" > reverse #single > to overwrite prev. contents
 	tac $FILENAME > reverse.txt
 
 	#echo "garbage" > status.txt #single > to overwrite prev. contents
@@ -41,5 +37,5 @@ while true; do
 	MATTSTATUS=$(sed '5q;d' line_endings.txt)
 	./$CPROGRAM $KATYSTATUS $BOBSTATUS $ZACHSTATUS $NICKSTATUS $MATTSTATUS
 
-	sleep 10
+	sleep 60
 done
